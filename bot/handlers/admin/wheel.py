@@ -9,6 +9,7 @@ from bot.database.methods import (
     ban_wheel_user,
     check_user_by_username,
     add_wheel_spins,
+    get_active_wheel_prizes,
 )
 from bot.database.models import Permission
 from bot.handlers.other import get_bot_user_ids
@@ -38,8 +39,26 @@ def _reset_wheel_state(user_id: int) -> None:
 
 
 async def _open_wheel_menu(call: CallbackQuery, lang: str) -> None:
+    prizes = get_active_wheel_prizes()
+    if prizes:
+        lines = [t(lang, 'wheel_menu_title'), '']
+        lines.append(t(lang, 'wheel_menu_prizes_header'))
+        for entry in prizes:
+            emoji_symbol = entry.emoji or '🎁'
+            lines.append(
+                t(
+                    lang,
+                    'wheel_menu_prize_entry',
+                    emoji=emoji_symbol,
+                    name=entry.name,
+                    location=entry.location,
+                )
+            )
+    else:
+        lines = [t(lang, 'wheel_menu_title'), '', t(lang, 'wheel_menu_no_prizes')]
+    text = '\n'.join(lines)
     await call.message.edit_text(
-        t(lang, 'wheel_menu_title'),
+        text,
         reply_markup=wheel_management_menu(lang),
     )
     TgConfig.STATE[call.from_user.id] = None
