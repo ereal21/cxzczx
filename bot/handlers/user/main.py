@@ -133,6 +133,51 @@ def _promo_application_available(user_id: int) -> bool:
     return not TgConfig.STATE.get(_promo_applied_key(user_id), False)
 
 
+def _active_promo_key(user_id: int) -> str:
+    return f'{user_id}_active_promo'
+
+
+def _store_active_promo(
+    user_id: int,
+    item_name: str,
+    code: str,
+    city: str | None,
+    district: str | None,
+) -> None:
+    TgConfig.STATE[_active_promo_key(user_id)] = {
+        'item_name': item_name,
+        'code': code,
+        'city': city,
+        'district': district,
+    }
+
+
+def _discard_active_promo(user_id: int) -> None:
+    TgConfig.STATE.pop(_active_promo_key(user_id), None)
+    TgConfig.STATE.pop(_promo_applied_key(user_id), None)
+
+
+def _complete_active_promo(user_id: int, item_name: str) -> None:
+    key = _active_promo_key(user_id)
+    active = TgConfig.STATE.get(key)
+    if not active or active.get('item_name') != item_name:
+        return
+    code = active.get('code')
+    if not code:
+        TgConfig.STATE.pop(key, None)
+        TgConfig.STATE.pop(_promo_applied_key(user_id), None)
+        return
+    mark_promocode_used(
+        user_id,
+        code,
+        item_name,
+        city=active.get('city'),
+        district=active.get('district'),
+    )
+    TgConfig.STATE.pop(key, None)
+    TgConfig.STATE.pop(_promo_applied_key(user_id), None)
+
+
 def _welcome_context_key(user_id: int) -> str:
     return f'{user_id}_welcome_menu'
 
@@ -210,17 +255,26 @@ def _render_wheel_frame(order: Sequence, pointer_index: int) -> str:
 
     total = len(emojis)
     if total == 1:
-        return f"⬇️\n{emojis[0]}"
+        return "      ⬆️\n      {emoji}".format(emoji=emojis[0])
 
     pointer_index = pointer_index % total
-    spacer = '\u2007'
-    offset = 0
-    for idx in range(pointer_index):
-        offset += len(emojis[idx])
-    offset += pointer_index  # account for the spaces between emojis
-    pointer_line = f"{spacer * offset}⬇️"
-    wheel_line = ' '.join(emojis)
-    return f"{pointer_line}\n{wheel_line}"
+
+    def _emoji_at(offset: int) -> str:
+        return emojis[(pointer_index + offset) % total]
+
+    ring = [_emoji_at(idx) for idx in range(8)]
+
+    top, top_right, right, bottom_right, bottom, bottom_left, left, top_left = ring
+
+    lines = [
+        "      ⬆️",
+        f"      {top}",
+        f"  {top_left}   🎡   {top_right}",
+        f"{left}         {right}",
+        f"  {bottom_left}   🔻   {bottom_right}",
+        f"      {bottom}",
+    ]
+    return '\n'.join(lines)
 
 
 async def _deliver_wheel_prize(bot, chat_id: int, prize, lang: str) -> None:
@@ -343,7 +397,7 @@ async def _apply_promo_discount(
     new_price = _calculate_discounted_price(price, discount)
     TgConfig.STATE[f'{user_id}_price'] = new_price
     TgConfig.STATE[_promo_applied_key(user_id)] = True
-    mark_promocode_used(user_id, code, item_name, city=city, district=district)
+    _store_active_promo(user_id, item_name, code, city, district)
     balance = get_user_balance(user_id)
     message_text = '\n\n'.join(
         [
@@ -722,6 +776,7 @@ async def back_to_menu_callback_handler(call: CallbackQuery):
     user = check_user(call.from_user.id)
     user_lang = get_user_language(user_id) or 'en'
     role_id = user.role_id if user else 1
+    _discard_active_promo(user_id)
     markup = main_menu(role_id, TgConfig.REVIEWS_URL, TgConfig.PRICE_LIST_URL, user_lang)
     purchases = select_user_items(user_id)
     await _ensure_wheel_spin_awarded(bot, user_id, purchases)
@@ -1131,7 +1186,7 @@ async def confirm_buy_callback_handler(call: CallbackQuery):
     lang = get_user_language(user_id) or 'en'
     balance = get_user_balance(user_id)
     _reset_promo_details(user_id)
-    TgConfig.STATE.pop(_promo_applied_key(user_id), None)
+    _discard_active_promo(user_id)
     TgConfig.STATE.pop(f'{user_id}_message_id', None)
     TgConfig.STATE[user_id] = None
     TgConfig.STATE[f'{user_id}_pending_item'] = item_name
@@ -1235,19 +1290,19 @@ async def process_promo_code(message: Message):
         TgConfig.STATE[f'{user_id}_promo_code_input'] = code
         TgConfig.STATE[f'{user_id}_promo_data'] = promo
         geo_targets = promo.get('geo_targets') or []
+        city_value: str | None = None
+        district_value: str | None = None
         if geo_targets:
-            TgConfig.STATE[user_id] = 'wait_promo_city'
-            await _edit_promo_message(
-                bot,
-                chat_id,
-                message_id,
-                user_id,
-                item_name,
-                lang,
-                t(lang, 'promo_prompt_city'),
-                reply_markup=back_markup,
-            )
-            return
+            primary = geo_targets[0]
+            city_value = _normalize_city_name(primary.get('city') or '') or None
+            district_value = _normalize_district_name(primary.get('district') or '')
+            for entry in geo_targets:
+                normalized_city = _normalize_city_name(entry.get('city') or '') or None
+                normalized_district = _normalize_district_name(entry.get('district') or '')
+                if normalized_city or normalized_district is not None:
+                    city_value = normalized_city
+                    district_value = normalized_district
+                    break
         await _apply_promo_discount(
             bot,
             chat_id,
@@ -1257,8 +1312,8 @@ async def process_promo_code(message: Message):
             lang,
             promo,
             code,
-            city=None,
-            district=None,
+            city=city_value,
+            district=district_value,
         )
         return
 
@@ -1560,6 +1615,8 @@ async def buy_item_callback_handler(call: CallbackQuery):
                 file_path,
             )
 
+            _complete_active_promo(user_id, item_name)
+
             user_info = await bot.get_chat(user_id)
             logger.info(f"User {user_id} ({user_info.first_name})"
                         f" bought 1 item of {value_data['item_name']} for {item_price}€")
@@ -1574,6 +1631,7 @@ async def buy_item_callback_handler(call: CallbackQuery):
                                     message_id=msg,
                                     text='❌ Item out of stock',
                                     reply_markup=back(f'item_{item_name}'))
+        _discard_active_promo(user_id)
         TgConfig.STATE.pop(f'{user_id}_pending_item', None)
         TgConfig.STATE.pop(f'{user_id}_price', None)
         return
@@ -1582,6 +1640,7 @@ async def buy_item_callback_handler(call: CallbackQuery):
                                 message_id=msg,
                                 text='❌ Insufficient funds',
                                 reply_markup=back(f'item_{item_name}'))
+    _discard_active_promo(user_id)
     TgConfig.STATE.pop(f'{user_id}_pending_item', None)
     TgConfig.STATE.pop(f'{user_id}_price', None)
 
@@ -1680,6 +1739,7 @@ async def handle_purchase_invoice_failure(bot, payment_id: str, message_key: str
     if not info:
         return False
     TgConfig.STATE.pop(f"{info['user_id']}_active_invoice", None)
+    _discard_active_promo(info['user_id'])
     lang = info['lang']
     chat_id = info['chat_id']
     message_id = info['invoice_message_id']
@@ -1711,11 +1771,13 @@ async def finalize_purchase_invoice(bot, payment_id: str) -> None:
 
     item_info_list = get_item_info(item_name)
     if not item_info_list:
+        _discard_active_promo(user_id)
         await handle_purchase_invoice_failure(bot, payment_id, 'purchase_invoice_cancelled')
         return
 
     value_data = get_item_value(item_name)
     if not value_data:
+        _discard_active_promo(user_id)
         with contextlib.suppress(Exception):
             await bot.edit_message_caption(
                 chat_id=chat_id,
@@ -1839,6 +1901,8 @@ async def finalize_purchase_invoice(bot, payment_id: str) -> None:
         photo_desc,
         file_path,
     )
+
+    _complete_active_promo(user_id, item_name)
 
     logger.info(
         "User %s (%s) completed crypto purchase of %s for %s€",
@@ -2020,11 +2084,11 @@ async def profile_callback_handler(call: CallbackQuery):
     wheel_spins = get_wheel_user_spins(user_id)
     markup = profile(items, user_lang, wheel_spins)
     profile_text = (
-        f"👤 <b>Profile</b> — {user.first_name}\n"
-        f"🆔 <b>ID</b> — <code>{user_id}</code>\n"
-        f"💳 <b>Balance</b> — <code>{balance}</code> €\n"
-        f"💵 <b>Total topped up</b> — <code>{overall_balance}</code> €\n"
-        f"🎁 <b>Items purchased</b> — {items} pcs"
+        f"👤 <b>Profile</b> - {user.first_name}\n"
+        f"🆔 <b>ID</b> - <code>{user_id}</code>\n"
+        f"💳 <b>Balance</b> - <code>{balance}</code> €\n"
+        f"💵 <b>Total topped up</b> - <code>{overall_balance}</code> €\n"
+        f"🎁 <b>Items purchased</b> - {items} pcs"
     )
     if wheel_spins > 0:
         profile_text += f"\n{t(user_lang, 'wheel_spin_counter', count=wheel_spins)}"

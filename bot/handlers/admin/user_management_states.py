@@ -71,16 +71,16 @@ async def user_profile_view(call: CallbackQuery):
         chat_id=call.message.chat.id,
         message_id=call.message.message_id,
         text=(
-            f"👤 <b>Profile</b> — {user_info.first_name}\n\n"
-            f"👤 <b>Username</b> — @{user_info.username}\n"
-            f"🆔 <b>ID</b> — <code>{user_id}</code>\n"
-            f"💳 <b>Balance</b> — <code>{user.balance}</code> €\n"
-            f"💵 <b>Total topped up</b> — <code>{overall_balance}</code> €\n"
-            f"🎁 <b>Items purchased</b> — {items} pcs\n\n"
-            f"👤 <b>Referral</b> — <code>{user.referral_id}</code>\n"
-            f"👥 <b>User's referrals</b> — {referrals}\n"
-            f"🎛 <b>Role</b> — {role}\n"
-            f"🕢 <b>Registration date</b> — <code>{user.registration_date}</code>\n"
+            f"👤 <b>Profile</b> - {user_info.first_name}\n\n"
+            f"👤 <b>Username</b> - @{user_info.username}\n"
+            f"🆔 <b>ID</b> - <code>{user_id}</code>\n"
+            f"💳 <b>Balance</b> - <code>{user.balance}</code> €\n"
+            f"💵 <b>Total topped up</b> - <code>{overall_balance}</code> €\n"
+            f"🎁 <b>Items purchased</b> - {items} pcs\n\n"
+            f"👤 <b>Referral</b> - <code>{user.referral_id}</code>\n"
+            f"👥 <b>User's referrals</b> - {referrals}\n"
+            f"🎛 <b>Role</b> - {role}\n"
+            f"🕢 <b>Registration date</b> - <code>{user.registration_date}</code>\n"
         ),
         parse_mode='HTML',
         reply_markup=user_management(

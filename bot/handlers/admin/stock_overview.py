@@ -31,7 +31,7 @@ def _collect_category_lines(category: str, depth: int = 0) -> tuple[list[str], i
     total_items = 0
     for item in items:
         amount = '∞' if check_value(item) else select_item_values_amount(item)
-        lines.append(f"{indent}  • {display_name(item)} — {amount}")
+        lines.append(f"{indent}  • {display_name(item)} - {amount}")
         total_items += 1
 
     subcategories = get_all_subcategories(category)
