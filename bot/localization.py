@@ -56,9 +56,9 @@ LANGUAGES = {
         'total_purchases': '📦 Total Purchases: {count}',
         'lounge_invite': (
             "🍷 Can't find or see something?\n"
-            'Slide into our apartments by the whiskey and treats table — we\'ll sort everything out for mutual benefit.'
+            'Slide into our apartments by the whiskey and treats table - we\'ll sort everything out for mutual benefit.'
         ),
-        'lounge_signature': '👑 - @KARUNUOTAS - 👑',
+        'lounge_signature': '👑 - @karunuoti - 👑',
         'note': '⚠️ Note: No refunds. Please ensure you send the exact amount for payments, as underpayments will not be confirmed.',
         'feedback_service': '🛎️ How was your experience with the service?\n✍️ Leave a hand review in our group: https://t.me/+QVDtC4t9OglmZDVk',
         'feedback_product': 'Opinion on the product?',
@@ -113,7 +113,7 @@ LANGUAGES = {
         'select_product': '🏪 Select a product',
 
         'wheel_spin_button': '🎡 Spin for prize ({count})',
-        'wheel_spin_counter': '🎡 <b>Wheel spins</b> — <code>{count}</code>',
+        'wheel_spin_counter': '🎡 <b>Wheel spins</b> - <code>{count}</code>',
         'wheel_spin_confirm': 'Use a wheel spin? You have {count} remaining.',
         'wheel_spin_confirm_use': '✅ Use spin',
         'wheel_spin_cancel': '🔙 Back',
@@ -135,6 +135,9 @@ LANGUAGES = {
         'wheel_menu_see_users': '👥 See users',
         'wheel_menu_remove_users': '🗑 Remove users',
         'wheel_menu_back': '🔙 Back to admin panel',
+        'wheel_menu_prizes_header': '🎁 Current prize pool:',
+        'wheel_menu_prize_entry': '{emoji} {name} - {location}',
+        'wheel_menu_no_prizes': 'No active prizes in the pool yet.',
 
         'wheel_assign_name_prompt': 'Enter prize name:',
         'wheel_assign_name_invalid': '❌ Please enter a prize name up to 120 characters.',
@@ -233,9 +236,9 @@ LANGUAGES = {
         'total_purchases': '📦 Всего покупок: {count}',
         'lounge_invite': (
             '🍷 Кто-то что-то не находит или не видит?\n'
-            'Загляните к нам в апартаменты к столику с виски и угощениями — обсудим всё так, чтобы всем было выгодно.'
+            'Загляните к нам в апартаменты к столику с виски и угощениями - обсудим всё так, чтобы всем было выгодно.'
         ),
-        'lounge_signature': '👑 - @KARUNUOTAS - 👑',
+        'lounge_signature': '👑 - @karunuoti - 👑',
         'note': '⚠️ Возврат средств невозможен. Отправляйте точную сумму, недоплаты не подтверждаются.',
         'feedback_service': '🛎️ Как вам обслуживание?\n✍️ Напишите отзыв вручную в группе: https://t.me/+QVDtC4t9OglmZDVk',
         'feedback_product': 'Мнение о товаре?',
@@ -248,10 +251,10 @@ LANGUAGES = {
         'blackjack_rules': (
             '🃏 <b>Правила Blackjack</b>\n'
             '• Наберите сумму карт как можно ближе к 21, не превышая.\n'
-            '• Карты 2-10 по номиналу, J/Q/K — 10.\n'
-            '• Туз — 1 или 11.\n'
+            '• Карты 2-10 по номиналу, J/Q/K - 10.\n'
+            '• Туз - 1 или 11.\n'
             '• Дилер берёт до 17.\n'
-            '• Перебор больше 21 — проигрыш.\n'
+            '• Перебор больше 21 - проигрыш.\n'
             'Нажмите 🃏 Hit, чтобы взять карту, или 🛑 Stand, чтобы остановиться.\n'
             'Удачи!'
         ),
@@ -295,7 +298,7 @@ LANGUAGES = {
         'select_product': '🏪 Выберите товар',
 
         'wheel_spin_button': '🎡 Вращать колесо ({count})',
-        'wheel_spin_counter': '🎡 <b>Вращения</b> — <code>{count}</code>',
+        'wheel_spin_counter': '🎡 <b>Вращения</b> - <code>{count}</code>',
         'wheel_spin_confirm': 'Использовать вращение? У вас осталось {count}.',
         'wheel_spin_confirm_use': '✅ Использовать попытку',
         'wheel_spin_cancel': '🔙 Назад',
@@ -317,6 +320,9 @@ LANGUAGES = {
         'wheel_menu_see_users': '👥 Просмотреть пользователей',
         'wheel_menu_remove_users': '🗑 Удалить пользователей',
         'wheel_menu_back': '🔙 Назад в админ-панель',
+        'wheel_menu_prizes_header': '🎁 Текущий призовой фонд:',
+        'wheel_menu_prize_entry': '{emoji} {name} - {location}',
+        'wheel_menu_no_prizes': 'Активных призов пока нет.',
 
         'wheel_assign_name_prompt': 'Введите название приза:',
         'wheel_assign_name_invalid': '❌ Введите название до 120 символов.',
@@ -410,7 +416,7 @@ LANGUAGES = {
             '🍷 Kažkas kažko neranda, nemato?\n'
             'Šokam pas mus į apartamentus prie viskio ir vaišių stalo – tada aptarsim viską abiejų pusių naudai.'
         ),
-        'lounge_signature': '👑 - @KARUNUOTAS - 👑',
+        'lounge_signature': '👑 - @karunuoti - 👑',
         'note': '⚠️ Pastaba: grąžinimų nėra. Įsitikinkite, kad siunčiate tikslią sumą, nes nepakankamos sumos nebus patvirtintos.',
         'feedback_service': '🛎️ Kaip vertinate aptarnavimą?\n✍️ Parašykite atsiliepimą šioje grupėje: https://t.me/+QVDtC4t9OglmZDVk',
         'feedback_product': 'Kokia nuomonė apie prekę?',
@@ -470,7 +476,7 @@ LANGUAGES = {
         'select_product': '🏪 Pasirinkite prekę',
 
         'wheel_spin_button': '🎡 Sukti ratą ({count})',
-        'wheel_spin_counter': '🎡 <b>Sukimai</b> — <code>{count}</code>',
+        'wheel_spin_counter': '🎡 <b>Sukimai</b> - <code>{count}</code>',
         'wheel_spin_confirm': 'Panaudoti sukimą? Liko {count}.',
         'wheel_spin_confirm_use': '✅ Naudoti sukimą',
         'wheel_spin_cancel': '🔙 Atgal',
@@ -492,6 +498,9 @@ LANGUAGES = {
         'wheel_menu_see_users': '👥 Peržiūrėti vartotojus',
         'wheel_menu_remove_users': '🗑 Pašalinti vartotojus',
         'wheel_menu_back': '🔙 Atgal į administravimą',
+        'wheel_menu_prizes_header': '🎁 Dabartinis prizų fondas:',
+        'wheel_menu_prize_entry': '{emoji} {name} - {location}',
+        'wheel_menu_no_prizes': 'Aktyvių prizų dar nėra.',
 
         'wheel_assign_name_prompt': 'Įveskite prizo pavadinimą:',
         'wheel_assign_name_invalid': '❌ Įveskite pavadinimą iki 120 simbolių.',
