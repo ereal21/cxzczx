@@ -98,7 +98,7 @@ def format_product_filters(filters: list[dict | tuple]) -> str:
             else:
                 prefix = 'Category' if entry[0] == 'category' else 'Item'
                 chunks.append(f"{prefix}: {entry[1]}")
-        return '\n'.join(chunks) if chunks else '—'
+        return '\n'.join(chunks) if chunks else '-'
 
     allowed_text = _format(allowed)
     excluded_text = _format(excluded)
@@ -454,7 +454,7 @@ def _build_city_keyboard(user_id: int) -> InlineKeyboardMarkup:
     markup = InlineKeyboardMarkup(row_width=1)
     selected = _selected_cities(user_id)
     if not categories:
-        markup.add(InlineKeyboardButton('— Nėra kategorijų —', callback_data='promo_target_main'))
+        markup.add(InlineKeyboardButton('- Nėra kategorijų -', callback_data='promo_target_main'))
     else:
         for idx, name in enumerate(categories, start=1):
             choice_id = str(idx)
@@ -488,7 +488,7 @@ def _build_district_category_keyboard(user_id: int) -> InlineKeyboardMarkup:
         mapping[choice_id] = name
         markup.add(InlineKeyboardButton(name, callback_data=f'promo_target_district_open_{choice_id}'))
     if not available:
-        markup.add(InlineKeyboardButton('— Nėra rajonų —', callback_data='promo_target_main'))
+        markup.add(InlineKeyboardButton('- Nėra rajonų -', callback_data='promo_target_main'))
     markup.add(InlineKeyboardButton('🔙 Back', callback_data='promo_target_main'))
     TgConfig.STATE[f'{user_id}_promo_geo_district_category_choices'] = mapping
     return markup
@@ -507,7 +507,7 @@ def _build_district_keyboard(user_id: int, category: str) -> InlineKeyboardMarku
     markup = InlineKeyboardMarkup(row_width=1)
     selected = _selected_districts(user_id)
     if not districts:
-        markup.add(InlineKeyboardButton('— Nėra rajonų —', callback_data='promo_target_districts'))
+        markup.add(InlineKeyboardButton('- Nėra rajonų -', callback_data='promo_target_districts'))
     else:
         for idx, name in enumerate(districts, start=1):
             choice_id = str(idx)
@@ -536,7 +536,7 @@ def _build_product_categories_keyboard(user_id: int, mode: str) -> InlineKeyboar
     selected = _allowed_categories(user_id) if mode == 'allowed' else _excluded_categories(user_id)
     markup = InlineKeyboardMarkup(row_width=1)
     if not categories:
-        markup.add(InlineKeyboardButton('— Nėra kategorijų —', callback_data='promo_target_main'))
+        markup.add(InlineKeyboardButton('- Nėra kategorijų -', callback_data='promo_target_main'))
     else:
         for idx, name in enumerate(categories, start=1):
             choice_id = str(idx)
@@ -575,7 +575,7 @@ def _build_product_subcategories_keyboard(user_id: int, category: str, mode: str
     selected = _allowed_categories(user_id) if mode == 'allowed' else _excluded_categories(user_id)
     markup = InlineKeyboardMarkup(row_width=1)
     if not subcategories:
-        markup.add(InlineKeyboardButton('— Nėra subkategorijų —', callback_data='promo_target_products'))
+        markup.add(InlineKeyboardButton('- Nėra subkategorijų -', callback_data='promo_target_products'))
     else:
         for idx, name in enumerate(subcategories, start=1):
             choice_id = str(idx)
@@ -609,7 +609,7 @@ def _build_product_items_keyboard(user_id: int, category: str, mode: str) -> Inl
     selected = _allowed_items(user_id) if mode == 'allowed' else _excluded_items(user_id)
     markup = InlineKeyboardMarkup(row_width=1)
     if not items:
-        markup.add(InlineKeyboardButton('— Nėra produktų —', callback_data='promo_target_products'))
+        markup.add(InlineKeyboardButton('- Nėra produktų -', callback_data='promo_target_products'))
     else:
         for idx, name in enumerate(items, start=1):
             choice_id = str(idx)
