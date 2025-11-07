@@ -1,0 +1,11 @@
+aiogram==2.25.2
+alembic
+bitcoinrpc
+flask
+qrcode
+python-dotenv
+requests
+SQLAlchemy
+solana
+web3
+yoomoney
